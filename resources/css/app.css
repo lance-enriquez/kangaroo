@@ -1,0 +1,15 @@
+.form-floating {
+    margin-top: 10px;
+}
+
+.btn-confirm {
+    margin-right: 10px;
+}
+
+.content {
+    padding : 40px 300px;
+}
+
+body {
+    background-image: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+}
