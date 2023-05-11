@@ -1,6 +1,6 @@
 /vendor/
 node_modules/
-logs/
+/logs/
 npm-debug.log
 yarn-error.log
 
