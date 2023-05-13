@@ -3,20 +3,33 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { UTIL } from './util.js';
 import { VALIDATION } from './validation.js';
+import datepickerFactory from 'jquery-datepicker';
 
 export const FORM = {
     init : () => {
+        datepickerFactory($);
         FORM.bindEvents();
+        FORM.formHTML = FORM.getHtmlForm();
     },
     bindEvents : () => {
         FORM.handleResetForm();
         VALIDATION.handleDecimalInputs();
     },
-    getHtmlForm : (disabledInputs) => {
-        $(UTIL.getSelectorNames(disabledInputs)).attr('disabled', true);
-        return $('#form').children().map(function() {
+    initDatePicker : () => {
+        $('.datepicker').datepicker({
+            dateFormat :'yy-mm-dd'
+        });
+    },
+    getHtmlForm : () => {
+        const form = $('#form');
+        const data = form.children().map(function() {
             return this.outerHTML;
         }).get().join('');
+        form.empty().remove();
+        return data;
+    },
+    setDisabledInputs : (disabledInputs) => {
+        $(UTIL.getSelectorNames(disabledInputs)).attr('disabled', true);
     },
     populateForm : (formData) => Object.keys(formData).map((key) => $('[name="' + key + '"]').val(formData[key])),
     getModalSettings : (formData) => {
@@ -26,7 +39,7 @@ export const FORM = {
 
         return {
             title             : (isEdit === true ? 'Edit' : 'Add') + ' a Kangaroo',
-            html              : FORM.getHtmlForm(disabledInputs),
+            html              : FORM.formHTML,
             focusConfirm      : true,
             showCancelButton  : true,
             showCloseButton   : true,
@@ -38,6 +51,8 @@ export const FORM = {
                 cancelButton  : 'btn btn-secondary btn-sm'
             },
             didOpen           : () => {
+                FORM.initDatePicker();
+                FORM.setDisabledInputs(disabledInputs);
                 FORM.populateForm(formData);
             },
             didClose          : () => FORM.handleResetDisabledInputs(),
@@ -48,11 +63,11 @@ export const FORM = {
             preConfirm : () => VALIDATION.doValidation(UTIL.getFormData(true)),
         }).fire(FORM.getModalSettings(formData)).then((result) => FORM.handlePostResult(result));
     },
-    handleResetForm : () => $('body').on('change', '.form-data', (e) => {
+    handleResetForm : () => $('body').on('change', '.form-data', () => {
         Swal.resetValidationMessage();
         VALIDATION.resetHighlightErrorFields();
     }),
-    handleResetDisabledInputs : () => $('.form-data').each((i,e) => $(e).attr('disabled', false)),
+    handleResetDisabledInputs : () => $('.form-data').each((index, element) => $(element).attr('disabled', false)),
     handleSubmit : (data) => {
         axios.post('/data', data)
             .then(({status}) => FORM.handleResponseAlert(status === 200, 'success', 'Saved!'))

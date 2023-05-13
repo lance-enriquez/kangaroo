@@ -36,7 +36,7 @@
         <label for="is_friendly" class="form-label form-control-sm">Friendliness:</label>
     </div>
     <div class="mb-12 form-floating">
-        <input id="birth_date" type="date" class="form-control form-data form-control-sm datepicker" name="birth_date" placeholder="Birthdate" required>
+        <input id="birth_date" type="text" class="form-control form-data form-control-sm datepicker" name="birth_date" placeholder="Birthdate" required>
         <label for="birth_date" class="form-label form-control-sm">Birthdate: *</label>
     </div>
 </div>
