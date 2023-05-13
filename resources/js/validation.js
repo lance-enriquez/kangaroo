@@ -38,13 +38,16 @@ export const VALIDATION = {
         $('.form-data').each((index, element) => $(element).removeClass('is-invalid'));
     },
     validateDecimal : (value) => {
-        return (/^[0-9]+\.[0-9][0-9]$/.test(value));
+        return (/^\d+\.\d{2}$/.test(value));
     },
     handleDecimalInputs : () => {
         $('body').on('keyup change', '[type="number"]', (element) => {
-            let value = parseFloat(element.target.value).toFixed(2);
-            value = (VALIDATION.validateDecimal(value) || value > 0) ? value : '0.00';
-            $(element.target).val(value);
+            const input = element.target;
+            const value = parseFloat(input.value).toFixed(2);
+            if (element.type === 'change') {
+                const status = !(value !== 'NaN' && value > 0 && $(input).val(value));
+                $(input).toggleClass('is-invalid', status);
+            }
         })
     },
 };
